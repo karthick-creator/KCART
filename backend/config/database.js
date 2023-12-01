@@ -13,4 +13,3 @@ const connectDatabase = () => {
 
 module.exports = connectDatabase;
 
-// https://github.com/jvlcode/jvlcart/blob/main/backend/data/products.json
