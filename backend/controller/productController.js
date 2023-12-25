@@ -24,6 +24,7 @@ exports.newProduct = catchAsyncError(async(req,res,next) =>{
     })
 });
 
+//Get single product - /api/v1/product/:id
 exports.getSingleProduct = async (req, res, next) => {
     try {
         // Attempt to find a product by its ID
