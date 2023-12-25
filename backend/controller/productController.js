@@ -24,24 +24,32 @@ exports.newProduct = catchAsyncError(async(req,res,next) =>{
     })
 });
 
-//Get single product - /api/v1/product/:id
-exports.getSingleProduct = async(req,res,next) =>{
-    const product = await Product.findById(req.params.id);
+exports.getSingleProduct = async (req, res, next) => {
+    try {
+        // Attempt to find a product by its ID
+        const product = await Product.findById(req.params.id);
 
-    if(!product){
+        // Check if the product exists
+        if (!product) {
+            // If the product is not found, return an error using the custom ErrorHandler
+            return next(new ErrorHandler("Product not found for single product", 400));
+        }
 
-         return next(new ErrorHandler("Product not found",400));
+        // If the product is found, send a success response with the product details
+        res.status(201).json({
+            success: true,
+            product
+        });
+    } catch (error) {
+        // Handle any unexpected errors that might occur during the process
+        // You might want to log the error for debugging purposes
+        console.error(error);
 
-        // res.status(404).json({
-        //     success: false,
-        //     message: "Product not found"
-        // })
+        // Return a generic server error response
+        return next(new ErrorHandler("Internal Server Error test", 500));
     }
-    res.status(201).json({
-        success:true,
-        product
-    })
-}
+};
+
 
 //Update product -  /api/v1/product/:id
 exports.updateProduct = async(req,res,next) => {
