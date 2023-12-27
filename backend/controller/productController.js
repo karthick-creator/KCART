@@ -1,13 +1,14 @@
 const catchAsyncError = require('../middlewares/catchAsyncError');
 const Product = require('../models/productModel');
-const apiFeatures = require('../utils/apiFeatures');
+const APIFeatures = require('../utils/apiFeatures');
 const ErrorHandler = require('../utils/errorHandler');
 
 //Get products  -  /api/v1/products
 exports.getProducts = async(req,res,next) =>{
-    const apiFeatures = new apiFeatures(Product.find(), req.query).search();
+    const resPerPage = 2;
+    const apiFeatures = new APIFeatures(Product.find(), req.query).search().filter().paginate(resPerPage);
 
-    const products = await apiFeatures.query1;
+    const products = await apiFeatures.query;
     res.status(200).json({
         success: true,
         count : products.length,
@@ -44,7 +45,7 @@ exports.getSingleProduct = async (req, res, next) => {
     } catch (error) {
         // Handle any unexpected errors that might occur during the process
         // You might want to log the error for debugging purposes
-        console.error(error);
+       //console.error(error);
 
         // Return a generic server error response
         return next(new ErrorHandler("Internal Server Error test", 500));
