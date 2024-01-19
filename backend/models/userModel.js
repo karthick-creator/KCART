@@ -18,7 +18,8 @@ const userSchema = mongoose.Schema(
         password : {
             type : String,
             required : [true, 'Please enter password'],
-            maxlength : [6, 'Password cannot exceed 6 characters']
+            maxlength : [6, 'Password cannot exceed 6 characters'],
+            select : false
         },
         avatar: {
             type : String,
@@ -46,4 +47,8 @@ userSchema.methods.getJwtToken = function(){
         expiresIn: process.env.JWT_EXPIRES_TIME
     })
 }
+userSchema.methods.isValidPassword = async function(enteredPassword){
+    return await bcrypt.compare(enteredPassword,this.password)
+}
+
 module.exports = mongoose.model('User', userSchema)
