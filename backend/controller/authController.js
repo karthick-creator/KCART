@@ -55,3 +55,29 @@ const sendToken = require('../utils/jwt');
       }
    )
  }
+
+ exports.forgotPassword = async (req,res,next) => {
+   
+   const user = await User.findOne({email: req.body.email});
+
+   if(!user){
+      return new ErrorHandler('User not found with this email')
+   }
+
+   const resetToken = user.getResetToken();
+   user.save({validateBeforeSave: false});
+
+   //create reset url
+   const resetUrl = `${req.protocol}://${req.get('host')}/api/v1/password/reset/${resetToken}`;
+
+   const message = `Your password url is as follows \n\n ${resetUrl} \n\n If you have not request this mail, then ignore it`
+
+   try {
+      
+   } catch (error) {
+      user.setPasswordToken =undefined;
+      user.resetPasswordTokenExpire = undefined;
+      user.save({validateBeforeSave: false})
+      return new ErrorHandler(error.message,500)
+   }
+ }
