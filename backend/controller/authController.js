@@ -1,5 +1,6 @@
  const catchAsyncError = require('../middlewares/catchAsyncError');
 const User = require('../models/userModel');
+const sendEmail = require('../utils/email');
 const ErrorHandler = require('../utils/errorHandler');
 const sendToken = require('../utils/jwt');
 
@@ -73,7 +74,18 @@ const sendToken = require('../utils/jwt');
    const message = `Your password url is as follows \n\n ${resetUrl} \n\n If you have not request this mail, then ignore it`
 
    try {
-      
+
+      sendEmail({
+            email: user.email,
+            subject: 'KCART password recovery',
+            message
+      })
+
+      res.status(200).json({
+         success : true,
+         message : `Email sent to ${user.email}`
+      })
+
    } catch (error) {
       user.setPasswordToken =undefined;
       user.resetPasswordTokenExpire = undefined;
