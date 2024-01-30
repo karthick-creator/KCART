@@ -98,14 +98,14 @@ const crypto = require('crypto')
  exports.resetPassword = catchAsyncError(async(req,res,next) =>{
    const resetPasswordToken = crypto.createHash('sha256').update(req.params.token).digest('hex')
 
-   const user = await user.findOne({
+   const user = await User.findOne({
       resetPasswordToken,
       resetPasswordTokenExpire : {
          $gt : Date.now()
       }
    })
    if(!user){
-      return next(new ErrorHandler('Passsword reset token is expired'))
+      return next(new ErrorHandler('Password reset token is expired or invalid'))
    }
 
    if(req.body.password !== req.body.confirmPassword){
@@ -119,3 +119,4 @@ const crypto = require('crypto')
 
    sendToken(user, 201, res)
  })
+
