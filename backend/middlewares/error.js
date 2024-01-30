@@ -29,6 +29,20 @@ module.exports = (err, req, res, next) => {
             err.statusCode = 400
         }
 
+        if(err.code == 11000){
+            let message = `Duplicate ${Object.keys(err.keyValue)} error`;
+            error = new Error(message)
+        }
+        
+        if(err.name == 'JSONWebTokenError'){
+            let message = `JSON web Token is invalid `;
+            error = new Error(message)
+        }
+
+        if(err.name == 'TokenExpiredError'){
+            let message = `JSON web Token is expired `;
+            error = new Error(message)
+        }
 
         res.status(err.statusCode).json({
             success: false,
