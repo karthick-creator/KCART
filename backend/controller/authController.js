@@ -36,9 +36,15 @@ const crypto = require('crypto')
         return next(new ErrorHandler("Invalid email or password",401));
      }
 
-     if(!user.isValidPassword(password)){
-        return next(new ErrorHandler("Invalid email or password",401));
+     const isValidPassword = await user.isValidPassword(password);
+
+     if (!isValidPassword) {
+         return next(new ErrorHandler("Invalid email or password", 401));
      }
+
+   //   if(!user.isValidPassword(password)){
+   //      return next(new ErrorHandler("Invalid email or password",401));
+   //   }
 
      sendToken(user, 201, res)
 
@@ -120,3 +126,42 @@ const crypto = require('crypto')
    sendToken(user, 201, res)
  })
 
+exports.getUserProfile = catchAsyncError(async(req,res,next) => {
+   const user = await User.findById(req.user.id)
+   res.status(200).json({
+      success : true,
+      user
+   })
+})
+
+exports.changePassword = catchAsyncError(async(req,res,next) => {
+   const user = await User.findById(req.user.id).select('+password')
+
+   if(!await user.isValidPassword(req.body.oldPassword)){
+      return next(new ErrorHandler('old password is incorrect'))
+   }
+
+   user.password = req.body.password;
+   await user.save();
+
+   res.status(200).json({
+		success: true
+	})
+})
+
+exports.updateProfile = catchAsyncError(async(req,res,next) => {
+	const newUserData = {
+	name : req.body.name,
+	email : req.body.email
+	}
+	
+	const user = await User.findByIdAndUpdate(req.user.id, newUserData,
+		{ new : true,
+		runValidators : true
+		})
+		
+		res.status(200).json({
+			success : true,
+			user
+		})
+})
