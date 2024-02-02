@@ -165,3 +165,59 @@ exports.updateProfile = catchAsyncError(async(req,res,next) => {
 			user
 		})
 })
+
+//admin: get all user
+exports.getAllUsers = catchAsyncError(async(req,res,next) =>{
+	const user = await User.find();
+	res.status(200).json({
+		success: true,
+		user
+	})	
+})	
+
+//admin: get specific user
+exports.getUser = catchAsyncError(async(req,res,next) =>{
+	const user = await User.findById(req.params.id);
+	if(!user){
+		return next(new ErrorHandler('User not found with this id'));
+	}
+	res.status(200).json({
+		success: true,
+		user
+	})	
+})	
+
+//admin: Update user
+
+exports.updateUser = catchAsyncError(async(req,res,next) => {
+	const newUserData = {
+	name : req.body.name,
+	email : req.body.email,
+	role : req.body.role
+	}
+	
+	const user = await User.findByIdAndUpdate(req.params.id, newUserData,
+		{ new : true,
+		runValidators : true
+		})
+		
+		res.status(200).json({
+			success : true,
+			user
+		})
+})
+
+//admin: Delete user
+
+exports.deleteUser = catchAsyncError(async(req,res,next) =>{
+	const user = await User.findById(req.params.id);
+	
+	if(!user){
+		return next(new ErrorHandler('User not found with this id'));
+	}
+	await user.deleteOne();
+	res.status(200).json({
+		success: true,
+		user
+	})	
+})	
