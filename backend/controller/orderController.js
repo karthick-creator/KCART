@@ -1,5 +1,6 @@
 const catchAsyncError = require("../middlewares/catchAsyncError");
 const Order = require("../models/orderModel");
+const Product = require("../models/productModel");
 const ErrorHandler = require("../utils/errorHandler");
 
 exports.newOrder = catchAsyncError(async(req,res,next) => {
@@ -79,8 +80,36 @@ exports.updateOrder = catchAsyncError(async(req,res,next) => {
 		return next(new ErrorHandler('Order has been delivered!'))
 	}
 
-	order.orderItems.forEach(orderItem => {
-		
+	order.orderItems.forEach(async orderItem => {
+		await updateStock(orderItem.product, orderItem.quantity);
 	}) 
+	
+	order.orderStatus = req.body.orderStatus;
+	order.deliveredAt = Date.now();
+	await order.save();
+
+	res.status(200).json({
+		success : true
+	})
 })
 
+async function updateStock (productId, quantity) {
+	const product = await Product.findById(productId);
+	product.stock = product.stock - quantity;
+	await product.save({validateBeforeSave : false});
+}
+
+exports.deleteOrder = catchAsyncError(async(req,res,next) => {
+	const order = await Order.findById(req.params.id);
+
+	if(!order) {
+		return next(new ErrorHandler(`Order not found with this ID : ${req.params.id}`, 404))
+	}
+
+	await order.deleteOne();          //remove function not work here
+
+	res.status(200).json({
+		success : true,
+		order
+	})
+})
