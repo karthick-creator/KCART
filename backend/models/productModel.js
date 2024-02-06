@@ -64,10 +64,11 @@ const productSchema = new mongoose.Schema({
     },
     reviews: [
         {
-            name:{
-                type: String,
-                required: true
-            },
+            user : mongoose.Schema.Types.ObjectId,
+            // name:{
+            //     type: String,
+            //     required: true
+            // },
             rating: {
                 type: String,
                 required: true

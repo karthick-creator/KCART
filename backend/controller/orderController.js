@@ -50,7 +50,7 @@ exports.myOrders = catchAsyncError(async(req,res,next) => {
 
 	res.status(200).json({
 		success : true,
-		order
+		orders
 	})
 })
 
@@ -68,7 +68,7 @@ exports.orders = catchAsyncError(async(req,res,next) => {
 	res.status(200).json({
 		success : true,
 		totalAmount,
-		order
+		orders
 	})
 })
 
