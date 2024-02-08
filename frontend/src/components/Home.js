@@ -1,5 +1,11 @@
+import { Fragment } from "react";
+import MetaData from "./layouts/MetaData";
+
 export default function Home () {
     return (
+      <Fragment>
+        <MetaData title ={'Buy best products'}/>
+        <h1 id="products_heading">Latest Products</h1>
         <section id="products" className="container mt-5">
       <div className="row">
         <div className="col-sm-12 col-md-6 col-lg-3 my-3">
@@ -126,5 +132,6 @@ export default function Home () {
         </div>
       </div>
         </section>
+      </Fragment>
     )
 }
